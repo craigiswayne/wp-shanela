@@ -1,5 +1,5 @@
 {
-  "name": "craigiswayne/wordpress-core-realign",
+  "name": "craigiswayne/wp-shanela",
   "description": "ReAligns the WordPress Core files to the root of the project",
   "type": "composer-plugin",
   "keywords": [
