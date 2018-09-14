@@ -28,7 +28,6 @@ class Scripts implements PluginInterface, EventSubscriberInterface
 	protected $isVerbose = false;
 	protected $wpCoreDirectory = 'wordpress'; //this is the default wp core install directory
 	
-	
 	public function activate(Composer $composer, IOInterface $io)
 	{
 		$this->composer = $composer;
@@ -100,9 +99,11 @@ class Scripts implements PluginInterface, EventSubscriberInterface
 	}
 	
 	
-	private function removeHelloPlugin(){
+	private function removeDefaultPlugins(){
 		self::log("Removing hello.php plugin...");
 		exec("if [ -f wp-content/plugins/hello.php ]; then rm wp-content/plugins/hello.php; fi" );
+		self::log("Removing akismet plugin...");
+		exec("if [ -d wp-content/plugins/akismet ]; then rm -rf wp-content/plugins/akismet; fi" );
 	}
 	
 	
@@ -120,7 +121,7 @@ class Scripts implements PluginInterface, EventSubscriberInterface
 	private function cleanup(){
 		self::rsyncWPCoreToProjectRoot();
 		self::removeWPCoreInstallationDirectory();
-		self::removeHelloPlugin();
+		self::removeDefaultPlugins();
 		self::removeStandardThemes();
 	}
 	
