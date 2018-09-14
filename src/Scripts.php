@@ -8,6 +8,7 @@ use Composer\IO\IOInterface;
 use Composer\Plugin\PluginInterface;
 use Composer\Script\Event;
 use Composer\Installer\PackageEvent;
+use Composer\Script\ScriptEvents as ScriptEvents;
 
 /**
  * Class Scripts
@@ -25,26 +26,38 @@ class Scripts implements PluginInterface, EventSubscriberInterface
 	protected $composer;
 	protected $io;
 	protected $isVerbose = false;
+	protected $wpCoreDirectory = 'wordpress'; //this is the default wp core install directory
+	
 	
 	public function activate(Composer $composer, IOInterface $io)
 	{
 		$this->composer = $composer;
 		$this->io = $io;
-		$this->isVerbose = $this->io->isVerbose();
-		
+		$this->wpCoreDirectory  = $this->getWPCoreInstallDirectory();
 	}
 	
+	
 	/**
+	 * Prints out a blue message to the console only if the composer is run with debug on, i.e. -vv
+	 * @param $message
+	 */
+	private function debug( $message ){
+		if( !$this->io->isVerbose() ){
+			return;
+		}
+		echo PHP_EOL.self::COLOR_LIGHT_BLUE.$message.self::COLOR_WHITE.PHP_EOL;
+	}
+	
+	
+	/**
+	 * Prints out a message to the console
 	 * @param $message
 	 */
 	private function log( $message ){
-		
-		if( $this->isVerbose ){
-			echo PHP_EOL.self::COLOR_LIGHT_BLUE.debug_backtrace()[1]['class'].'\\'.debug_backtrace()[1]['function'].self::COLOR_WHITE.PHP_EOL;
-		}
-		
+		self::debug( debug_backtrace()[1]['class'].'\\'.debug_backtrace()[1]['function'] );
 		echo $message.PHP_EOL;
 	}
+	
 	
 	/**
 	 * @see https://getcomposer.org/doc/articles/plugins.md
@@ -53,31 +66,51 @@ class Scripts implements PluginInterface, EventSubscriberInterface
 	public static function getSubscribedEvents()
 	{
 		return array(
-			'post-autoload-dump' => array(
+			ScriptEvents::POST_AUTOLOAD_DUMP => array(
 				array( 'postAutoloadDump', 1 )
 			)
 		);
 	}
 	
+	/**
+	 * Gets the config used for the wordpress core install directory,
+	 * if none is found, uses the default value, i.e. wordpress
+	 * @return string
+	 */
+	private function getWPCoreInstallDirectory(){
+		
+		$extra = $this->composer->getPackage()->getExtra();
+		$this->wpCoreDirectory = isset( $extra['wordpress-install-dir'] ) ? $extra['wordpress-install-dir'] : $this->wpCoreDirectory;
+		
+		self::debug( 'WordPress Core directory found at: '. $this->wpCoreDirectory );
+		
+		return $this->wpCoreDirectory;
+	}
+	
+	
 	private function rsyncWPCoreToProjectRoot(){
 		self::log("rsync'ing the WordPress Core files to the Project Root...");
-		exec("if [ -d wordpress-core ]; then rsync -rtlpP wordpress-core/* ./ --exclude='composer.json' --exclude='vendor'; fi" );
+		exec("if [ -d ".$this->wpCoreDirectory." ]; then rsync -rtlpP ".$this->wpCoreDirectory."/* ./ --exclude='composer.json' --exclude='vendor'; fi" );
 	}
+	
 	
 	private function removeWPCoreInstallationDirectory(){
 		self::log("Removing the WordPress Core installation Directory...");
-		exec("if [ -d wordpress-core ]; then rm -rf wordpress-core; fi" );
+		exec("if [ -d ".$this->wpCoreDirectory." ]; then rm -rf ".$this->wpCoreDirectory."; fi" );
 	}
+	
 	
 	private function removeHelloPlugin(){
 		self::log("Removing hello.php plugin...");
 		exec("if [ -f wp-content/plugins/hello.php ]; then rm wp-content/plugins/hello.php; fi" );
 	}
 	
+	
 	private function removeStandardThemes(){
 		self::log("Removing standard WordPress Themes...");
 		exec('rm -rf wp-content/themes/twenty*');
 	}
+	
 	
 	/**
 	 * called via postAutoloadDump
@@ -90,6 +123,7 @@ class Scripts implements PluginInterface, EventSubscriberInterface
 		self::removeHelloPlugin();
 		self::removeStandardThemes();
 	}
+	
 	
 	public function postAutoloadDump( Event $event){
 		self::cleanup();
