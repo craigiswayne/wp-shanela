@@ -3,9 +3,11 @@
 namespace Splinter\Composer\WordPress;
 
 use Composer\Composer;
+use Composer\EventDispatcher\EventSubscriberInterface;
 use Composer\IO\IOInterface;
 use Composer\Plugin\PluginInterface;
-use Composer\EventDispatcher\EventSubscriberInterface;
+use Composer\Script\Event;
+use Composer\Installer\PackageEvent;
 
 /**
  * Class Scripts
@@ -22,18 +24,25 @@ class Scripts implements PluginInterface, EventSubscriberInterface
 	const COLOR_WHITE = "\033[0m";
 	protected $composer;
 	protected $io;
+	protected $isVerbose = false;
 	
 	public function activate(Composer $composer, IOInterface $io)
 	{
 		$this->composer = $composer;
 		$this->io = $io;
+		$this->isVerbose = $this->io->isVerbose();
+		
 	}
 	
 	/**
 	 * @param $message
 	 */
 	private function log( $message ){
-		echo PHP_EOL.self::COLOR_LIGHT_BLUE.debug_backtrace()[1]['class'].'\\'.debug_backtrace()[1]['function'].self::COLOR_WHITE.PHP_EOL;
+		
+		if( $this->isVerbose ){
+			echo PHP_EOL.self::COLOR_LIGHT_BLUE.debug_backtrace()[1]['class'].'\\'.debug_backtrace()[1]['function'].self::COLOR_WHITE.PHP_EOL;
+		}
+		
 		echo $message.PHP_EOL;
 	}
 	
@@ -46,18 +55,6 @@ class Scripts implements PluginInterface, EventSubscriberInterface
 		return array(
 			'post-autoload-dump' => array(
 				array( 'postAutoloadDump', 1 )
-			),
-			'post-root-package-install' => array(
-				array( 'postRootPackageInstall', 1 )
-			),
-			'pre-autoload-dump' => array(
-				array( 'preAutoloadDump', 1 )
-			),
-			'pre-install-cmd' => array(
-				array( 'preInstallCMD', 1 )
-			),
-			'post-install-cmd' => array(
-				array( 'postInstallCMD', 1 )
 			)
 		);
 	}
@@ -82,6 +79,11 @@ class Scripts implements PluginInterface, EventSubscriberInterface
 		exec('rm -rf wp-content/themes/twenty*');
 	}
 	
+	/**
+	 * called via postAutoloadDump
+	 *
+	 * @see postAutoloadDump
+	 */
 	private function cleanup(){
 		self::rsyncWPCoreToProjectRoot();
 		self::removeWPCoreInstallationDirectory();
@@ -89,23 +91,7 @@ class Scripts implements PluginInterface, EventSubscriberInterface
 		self::removeStandardThemes();
 	}
 	
-	public function preAutoloadDump($event){
-		echo PHP_EOL."CW: ".__METHOD__.PHP_EOL;
-	}
-	
-	public function postAutoloadDump($event){
+	public function postAutoloadDump( Event $event){
 		self::cleanup();
-	}
-	
-	public function postRootPackageInstall($event){
-//		echo PHP_EOL."CW: ".__METHOD__.PHP_EOL;
-	}
-	
-	public function preInstallCMD($event){
-//		echo PHP_EOL."CW: ".__METHOD__.PHP_EOL;
-	}
-	
-	public function postInstallCMD($event){
-//		echo PHP_EOL."CW: ".__METHOD__.PHP_EOL;
 	}
 }
