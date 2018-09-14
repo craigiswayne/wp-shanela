@@ -1,3 +1,5 @@
+# 2018-09-14 - Detect custom wordpress core install directory
+
 # 2018-09-14 - Trimmed
 * Removed unused code
 * Some messages will only show if composer is run in verbose mode
