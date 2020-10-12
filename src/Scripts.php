@@ -70,49 +70,51 @@ class Scripts implements PluginInterface, EventSubscriberInterface
 			)
 		);
 	}
-	
+
 	/**
 	 * Gets the config used for the wordpress core install directory,
 	 * if none is found, uses the default value, i.e. wordpress
 	 * @return string
 	 */
 	private function getWPCoreInstallDirectory(){
-		
+
 		$extra = $this->composer->getPackage()->getExtra();
 		$this->wpCoreDirectory = isset( $extra['wordpress-install-dir'] ) ? $extra['wordpress-install-dir'] : $this->wpCoreDirectory;
-		
+
 		self::debug( 'WordPress Core directory found at: '. $this->wpCoreDirectory );
-		
+
 		return $this->wpCoreDirectory;
 	}
-	
-	
+
+
 	private function rsyncWPCoreToProjectRoot(){
 		self::log("rsync'ing the WordPress Core files to the Project Root...");
 		exec("if [ -d ".$this->wpCoreDirectory." ]; then rsync -rtlpP ".$this->wpCoreDirectory."/* ./ --exclude='composer.json' --exclude='vendor'; fi" );
 	}
-	
-	
+
+
 	private function removeWPCoreInstallationDirectory(){
 		self::log("Removing the WordPress Core installation Directory...");
 		exec("if [ -d ".$this->wpCoreDirectory." ]; then rm -rf ".$this->wpCoreDirectory."; fi" );
 	}
 	
-	
+	/**
+	 * Removes the hello and akismet plugin
+	 */
 	private function removeDefaultPlugins(){
 		self::log("Removing hello.php plugin...");
 		exec("if [ -f wp-content/plugins/hello.php ]; then rm wp-content/plugins/hello.php; fi" );
 		self::log("Removing akismet plugin...");
 		exec("if [ -d wp-content/plugins/akismet ]; then rm -rf wp-content/plugins/akismet; fi" );
 	}
-	
-	
+
+
 	private function removeStandardThemes(){
 		self::log("Removing standard WordPress Themes...");
 		exec('rm -rf wp-content/themes/twenty*');
 	}
-	
-	
+
+
 	/**
 	 * called via postAutoloadDump
 	 *
