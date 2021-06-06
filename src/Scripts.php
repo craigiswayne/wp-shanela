@@ -35,6 +35,15 @@ class Scripts implements PluginInterface, EventSubscriberInterface
 		$this->wpCoreDirectory  = $this->getWPCoreInstallDirectory();
 	}
 	
+	public function deactivate(Composer $composer, IOInterface $io){
+		$this->$this->log('TODO: Deactivate');
+		return;
+	}
+
+	public function uninstall(Composer $composer, IOInterface $io){
+		$this->$this->log('TODO: Uninstall');
+		return;
+	}
 	
 	/**
 	 * Prints out a blue message to the console only if the composer is run with debug on, i.e. -vv
@@ -47,7 +56,6 @@ class Scripts implements PluginInterface, EventSubscriberInterface
 		echo PHP_EOL.self::COLOR_LIGHT_BLUE.$message.self::COLOR_WHITE.PHP_EOL;
 	}
 	
-	
 	/**
 	 * Prints out a message to the console
 	 * @param $message
@@ -56,7 +64,6 @@ class Scripts implements PluginInterface, EventSubscriberInterface
 		self::debug( debug_backtrace()[1]['class'].'\\'.debug_backtrace()[1]['function'] );
 		echo $message.PHP_EOL;
 	}
-	
 	
 	/**
 	 * @see https://getcomposer.org/doc/articles/plugins.md
