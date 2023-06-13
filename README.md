@@ -6,9 +6,6 @@ Moves the wordpress core files to the root of your project
 composer require craigiswayne/wp-shanela
 ```
 
-### Releasing
-Releases are based off tags
-
 ### Resources
 1. **https://www.masterzendframework.com/series/tooling/composer/automation-scripts/**
 1. https://pantheon.io/blog/writing-composer-scripts
