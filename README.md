@@ -1,7 +1,13 @@
+## Shanela
+Moves the wordpress core files to the root of your project
+
 ### Usage
 ```
 composer require craigiswayne/wp-shanela
 ```
+
+### Releasing
+Releases are based off tags
 
 ### Resources
 1. **https://www.masterzendframework.com/series/tooling/composer/automation-scripts/**

@@ -105,7 +105,6 @@ class Scripts implements PluginInterface, EventSubscriberInterface
             '..',
             'license.txt',
             'readme.html',
-            'wp-config-sample.php',
             'composer.json'
         ];
         
@@ -160,7 +159,73 @@ class Scripts implements PluginInterface, EventSubscriberInterface
         return (count(scandir($dir)) == 2);
     }
     
-    public function postAutoloadDump( Event $event){
+    private function findAllFilesInDirectory($directory) {
+        $filesFound = [];
+        $excludedFiles = ['.', '..'];
+        foreach(scandir($directory) as $filename){
+            
+            if(in_array($filename, $excludedFiles)){
+                continue;
+            }
+            
+            $fullFileName = "$directory".DIRECTORY_SEPARATOR.$filename;
+            
+            if(!is_dir($fullFileName)){
+                $filesFound[] = $fullFileName;
+                continue;
+            }
+            
+            $nestedFilesFound = $this->findAllFilesInDirectory($fullFileName);
+            $filesFound = array_merge($filesFound, $nestedFilesFound);
+        }
+        return $filesFound;
+    }
+    
+    private function destroyDirectory($directory): void {
+        if(!is_dir($directory)){
+            return;
+        }
+        
+        $excludedFiles = ['.', '..'];
+        foreach(scandir($directory) as $filename){
+            
+            if(in_array($filename, $excludedFiles)){
+                continue;
+            }
+            
+            $fullFileName = "$directory".DIRECTORY_SEPARATOR.$filename;
+            
+            if(!is_dir($fullFileName)){
+                unlink($fullFileName);
+                continue;
+            }
+            
+            $this->destroyDirectory($fullFileName);
+        }
+        
+        if($this->dirIsEmpty($directory)){
+            rmdir($directory);
+        }
+    }
+    
+    private function removeDefaultPlugins(){
+        self::log('Removing Plugin: akismet');
+        $this->destroyDirectory($this->wpCoreDirectory.DIRECTORY_SEPARATOR."wp-content".DIRECTORY_SEPARATOR."plugins".DIRECTORY_SEPARATOR."akismet");
+        self::log('Removing Plugin: hello.php');
+        unlink($this->wpCoreDirectory.DIRECTORY_SEPARATOR."wp-content".DIRECTORY_SEPARATOR."plugins".DIRECTORY_SEPARATOR."hello.php");
+    }
+    
+    private function removeDefaultThemes(){
+        $themes = ['twentytwentyone', 'twentytwentytwo', 'twentytwentythree'];
+        foreach($themes as $theme){
+            self::log("Removing Theme: $theme");
+            $this->destroyDirectory($this->wpCoreDirectory.DIRECTORY_SEPARATOR."wp-content".DIRECTORY_SEPARATOR."themes".DIRECTORY_SEPARATOR.$theme);
+        }
+    }
+
+    public function postAutoloadDump(Event $event){
+        self::removeDefaultPlugins();
+        self::removeDefaultThemes();
         self::log("Moving files from $this->wpCoreDirectory -> ./");
         $this->moveFiles($this->wpCoreDirectory, './');
     }

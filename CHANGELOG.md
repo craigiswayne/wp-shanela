@@ -1,3 +1,5 @@
+# 2023-06-13 - Makes use of php rename and unlink commands to delete manipulate files
+
 # 2018-09-14 - Removes akismet plugin
 
 # 2018-09-14 - Detect custom wordpress core install directory
