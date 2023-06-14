@@ -1,9 +1,25 @@
 ## Shanela
 Moves the wordpress core files to the root of your project
 
-### Usage
+## Usage
 ```
 composer require craigiswayne/wp-shanela
+```
+
+### Options
+You have 2 options that you can configure:
+* removeDefaultThemes (default: true)
+* removeDefaultPlugins (default: true)
+
+```
+{
+    "extra": {
+        "wp-shanela": {
+            "removeDefaultThemes": false,
+            "removeDefaultPlugins": false
+        }
+    }
+}
 ```
 
 ### Resources

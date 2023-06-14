@@ -74,6 +74,14 @@ class Scripts implements PluginInterface, EventSubscriberInterface
         );
     }
     
+    private function getOption(string $optionName, bool $defaultValue): bool {
+        $extra = $this->composer->getPackage()->getExtra();
+        if(!isset($extra['wp-shanela']) || !isset($extra['wp-shanela'][$optionName])){
+            return $defaultValue;
+        }
+        return $extra['wp-shanela'][$optionName];
+    }
+
     /**
      * Gets the config used for the WordPress core install directory,
      * if none is found, uses the default value, i.e. wordpress
@@ -224,8 +232,12 @@ class Scripts implements PluginInterface, EventSubscriberInterface
     }
 
     public function postAutoloadDump(Event $event){
-        self::removeDefaultPlugins();
-        self::removeDefaultThemes();
+        if($this->getOption('removeDefaultThemes', true)){
+            self::removeDefaultThemes();
+        }
+        if($this->getOption('removeDefaultPlugins', true)) {
+            self::removeDefaultPlugins();
+        }
         self::log("Moving files from $this->wpCoreDirectory -> ./");
         $this->moveFiles($this->wpCoreDirectory, './');
     }
