@@ -68,8 +68,8 @@ class Scripts implements PluginInterface, EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return array(
-            ScriptEvents::POST_AUTOLOAD_DUMP => array(
-                array( 'postAutoloadDump', 1 )
+            ScriptEvents::POST_INSTALL_CMD => array(
+                array( 'postInstall', 1 )
             )
         );
     }
@@ -231,7 +231,7 @@ class Scripts implements PluginInterface, EventSubscriberInterface
         }
     }
 
-    public function postAutoloadDump(Event $event){
+    public function postInstall(Event $event){
         if($this->getOption('removeDefaultThemes', true)){
             self::removeDefaultThemes();
         }
