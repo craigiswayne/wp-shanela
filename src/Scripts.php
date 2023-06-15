@@ -68,8 +68,8 @@ class Scripts implements PluginInterface, EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return array(
-            ScriptEvents::POST_INSTALL_CMD => array(
-                array( 'postInstall', 1 )
+            ScriptEvents::POST_AUTOLOAD_DUMP => array(
+                array( 'postAutoloadDump', 1 )
             )
         );
     }
@@ -231,7 +231,13 @@ class Scripts implements PluginInterface, EventSubscriberInterface
         }
     }
 
-    public function postInstall(Event $event){
+    public function postAutoloadDump(Event $event){
+        // TODO: check if wordpress directory exists
+        if(!is_dir($this->wpCoreDirectory)){
+            self::log("Not moving anything since the wordpress directory does not exist");
+            return;
+        }
+
         if($this->getOption('removeDefaultThemes', true)){
             self::removeDefaultThemes();
         }
