@@ -220,7 +220,12 @@ class Scripts implements PluginInterface, EventSubscriberInterface
         self::log('Removing Plugin: akismet');
         $this->destroyDirectory($this->wpCoreDirectory.DIRECTORY_SEPARATOR."wp-content".DIRECTORY_SEPARATOR."plugins".DIRECTORY_SEPARATOR."akismet");
         self::log('Removing Plugin: hello.php');
-        unlink($this->wpCoreDirectory.DIRECTORY_SEPARATOR."wp-content".DIRECTORY_SEPARATOR."plugins".DIRECTORY_SEPARATOR."hello.php");
+        $hello_plugin_file = $this->wpCoreDirectory.DIRECTORY_SEPARATOR."wp-content".DIRECTORY_SEPARATOR."plugins".DIRECTORY_SEPARATOR."hello.php";
+        if(file_exists($hello_plugin_file)){
+            unlink($hello_plugin_file);
+        } else {
+            self::log('Plugin file does not exist: hello.php');
+        }
     }
     
     private function removeDefaultThemes(){
