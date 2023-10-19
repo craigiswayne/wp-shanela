@@ -32,5 +32,10 @@
       "composer/installers": true,
       "johnpbloch/wordpress-core-installer": true
     }
+  },
+  "scripts": {
+    "git-version": [
+      "git describe --tags --abbrev=0"
+    ]
   }
 }
