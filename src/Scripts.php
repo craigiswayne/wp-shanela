@@ -229,7 +229,7 @@ class Scripts implements PluginInterface, EventSubscriberInterface
     }
     
     private function removeDefaultThemes(){
-        $themes = ['twentytwentyone', 'twentytwentytwo', 'twentytwentythree'];
+        $themes = ['twentytwentyone', 'twentytwentytwo', 'twentytwentythree', 'twemtytwentyfour'];
         foreach($themes as $theme){
             self::log("Removing Theme: $theme");
             $this->destroyDirectory($this->wpCoreDirectory.DIRECTORY_SEPARATOR."wp-content".DIRECTORY_SEPARATOR."themes".DIRECTORY_SEPARATOR.$theme);
