@@ -1,7 +1,4 @@
 <?php
-namespace {
-    const DS = DIRECTORY_SEPARATOR;
-}
 
 namespace Splinter\Composer\WordPress {
 
@@ -87,13 +84,13 @@ namespace Splinter\Composer\WordPress {
         private function getFinalThemesDirectory(){
 //        $extra = $this->composer->getPackage()->getExtra();
 //        TODO: read from installer-paths config here
-            return "wp-content".DS."themes";
+            return "wp-content".DIRECTORY_SEPARATOR."themes";
         }
 
         private function getFinalPluginsDirectory(){
 //        $extra = $this->composer->getPackage()->getExtra();
 //        TODO: read from installer-paths config here
-            return "wp-content".DS."plugins";
+            return "wp-content".DIRECTORY_SEPARATOR."plugins";
         }
 
         /**
@@ -131,7 +128,7 @@ namespace Splinter\Composer\WordPress {
             ];
 
             foreach($filesFoundInDirectory as $fileName) {
-                $sourceFile = $sourceDir.DS.$fileName;
+                $sourceFile = $sourceDir.DIRECTORY_SEPARATOR.$fileName;
 
                 if (in_array($fileName, $filesToExclude)) {
                     if (!is_dir($sourceFile)) {
@@ -189,7 +186,7 @@ namespace Splinter\Composer\WordPress {
                     continue;
                 }
 
-                $fullFileName = "$directory".DS.$filename;
+                $fullFileName = "$directory".DIRECTORY_SEPARATOR.$filename;
 
                 if(!is_dir($fullFileName)){
                     $filesFound[] = $fullFileName;
@@ -224,7 +221,7 @@ namespace Splinter\Composer\WordPress {
                     continue;
                 }
 
-                $fullFileName = "$directory".DS.$filename;
+                $fullFileName = "$directory".DIRECTORY_SEPARATOR.$filename;
 
                 if(!is_dir($fullFileName)){
                     self::safeDeleteFile($fullFileName);
@@ -245,8 +242,8 @@ namespace Splinter\Composer\WordPress {
             ];
             foreach($plugin_directories_to_remove as $pluginDir) {
                 self::log("Removing Plugin: $pluginDir");
-                $this->safeDeleteDirectory($this->wpCoreInstallDirectory.DS."wp-content".DS."plugins".DS.$pluginDir);
-                $this->safeDeleteDirectory(self::getFinalPluginsDirectory().DS.$pluginDir);
+                $this->safeDeleteDirectory($this->wpCoreInstallDirectory.DIRECTORY_SEPARATOR."wp-content".DIRECTORY_SEPARATOR."plugins".DIRECTORY_SEPARATOR.$pluginDir);
+                $this->safeDeleteDirectory(self::getFinalPluginsDirectory().DIRECTORY_SEPARATOR.$pluginDir);
 
             }
 
@@ -255,7 +252,7 @@ namespace Splinter\Composer\WordPress {
             ];
             foreach($plugin_files_to_remove as $pluginFile) {
                 self::log("Removing Plugin: $pluginFile");
-                $fullPluginFilePath = $this->wpCoreInstallDirectory.DS."wp-content".DS."plugins".DS.$pluginFile;
+                $fullPluginFilePath = $this->wpCoreInstallDirectory.DIRECTORY_SEPARATOR."wp-content".DIRECTORY_SEPARATOR."plugins".DIRECTORY_SEPARATOR.$pluginFile;
                 self::safeDeleteFile($fullPluginFilePath, 'Removing Plugin:');
             }
         }
@@ -264,8 +261,8 @@ namespace Splinter\Composer\WordPress {
             $themes = ['twentytwentyone', 'twentytwentytwo', 'twentytwentythree', 'twemtytwentyfour'];
             foreach($themes as $theme){
                 self::log("Removing Theme: $theme");
-                $this->safeDeleteDirectory($this->wpCoreInstallDirectory.DS."wp-content".DS."themes".DS.$theme);
-                $this->safeDeleteDirectory(self::getFinalThemesDirectory().DS.$theme);
+                $this->safeDeleteDirectory($this->wpCoreInstallDirectory.DIRECTORY_SEPARATOR."wp-content".DIRECTORY_SEPARATOR."themes".DIRECTORY_SEPARATOR.$theme);
+                $this->safeDeleteDirectory(self::getFinalThemesDirectory().DIRECTORY_SEPARATOR.$theme);
             }
         }
 
