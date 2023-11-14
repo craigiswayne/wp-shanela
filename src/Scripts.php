@@ -200,11 +200,11 @@ namespace Splinter\Composer\WordPress {
         }
 
         private function safeDeleteFile($fileName, $label = 'Deleting file:') {
-            self::log("$label: $fileName");
+            self::debug("$label: $fileName");
             if(file_exists($fileName)){
                 unlink($fileName);
             } else {
-                self::log("File does not exist: $fileName");
+                self::debug("File does not exist: $fileName");
             }
         }
 
