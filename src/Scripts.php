@@ -258,7 +258,7 @@ namespace Splinter\Composer\WordPress {
         }
 
         private function removeDefaultThemes(){
-            $themes = ['twentytwentyone', 'twentytwentytwo', 'twentytwentythree', 'twemtytwentyfour'];
+            $themes = ['twentytwentyone', 'twentytwentytwo', 'twentytwentythree', 'twentytwentyfour'];
             foreach($themes as $theme){
                 self::log("Removing Theme: $theme");
                 $this->safeDeleteDirectory($this->wpCoreInstallDirectory.DIRECTORY_SEPARATOR."wp-content".DIRECTORY_SEPARATOR."themes".DIRECTORY_SEPARATOR.$theme);

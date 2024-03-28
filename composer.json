@@ -1,6 +1,7 @@
 {
   "name": "craigiswayne/wp-shanela",
   "description": "ReAligns the WordPress Core files to the root of the project",
+  "version": "1.0.3",
   "type": "composer-plugin",
   "keywords": [
     "composer",
