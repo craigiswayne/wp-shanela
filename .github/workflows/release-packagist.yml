@@ -32,15 +32,10 @@ jobs:
         id: version_incrementer
         uses: reecetech/version-increment@2023.9.3
 
-      - name: "Update Composer Package Version"
-        run: |
-          composer config version ${{ steps.version_incrementer.outputs.version }}
-
       - uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "Incrementing version number"
           tagging_message: '${{ steps.version_incrementer.outputs.version }}'
-          file_pattern: 'composer.json'
 
 
     # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
