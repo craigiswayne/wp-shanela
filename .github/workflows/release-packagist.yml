@@ -2,7 +2,8 @@ name: PHP Composer
 
 on:
   push:
-    branches: [ "master" ]
+    branches:
+      - develop
 
 permissions:
   contents: read
@@ -13,10 +14,10 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Validate composer.json and composer.lock
+      - name: "Composer: Validate"
         run: composer validate --strict
 
-      - name: Cache Composer packages
+      - name: "Composer: Cache"
         id: composer-cache
         uses: actions/cache@v3
         with:
@@ -25,17 +26,20 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-php-
 
-      - name: "Composer Install"
+      - name: "Composer: Install"
         run: composer install --prefer-dist --no-progress
 
-      - name: "Get next version"
+      - name: "Version: Increment"
         id: version_incrementer
         uses: reecetech/version-increment@2023.9.3
 
-      - uses: stefanzweifel/git-auto-commit-action@v5
+      - uses: ncipollo/release-action@v1
         with:
-          commit_message: "Incrementing version number"
-          tagging_message: '${{ steps.version_incrementer.outputs.version }}'
+          tag: "${{ steps.version_incrementer.outputs.version }}"
+          artifacts: |
+            src/**
+            composer.json
+            composer.lock
 
 
     # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
