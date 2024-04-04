@@ -37,7 +37,7 @@ jobs:
         with:
           tag: "${{ steps.version_incrementer.outputs.version }}"
           artifacts: |
-            src/**
+            Scripts.php
             composer.json
             composer.lock
 

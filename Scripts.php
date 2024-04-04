@@ -1,6 +1,6 @@
 <?php
 
-namespace Splinter\Composer\WordPress {
+namespace CraigWayne\Composer\WordPress {
 
     use Composer\Composer;
     use Composer\EventDispatcher\EventSubscriberInterface;

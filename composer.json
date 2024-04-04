@@ -15,7 +15,7 @@
   ],
   "autoload": {
     "psr-4": {
-      "Splinter\\Composer\\WordPress\\": "src/"
+      "CraigWayne\\Composer\\WordPress\\": "/"
     }
   },
   "require": {
@@ -25,7 +25,7 @@
     "johnpbloch/wordpress": "^4 || ^5 || ^6"
   },
   "extra": {
-    "class": "Splinter\\Composer\\WordPress\\Scripts"
+    "class": "CraigWayne\\Composer\\WordPress\\Scripts"
   },
   "config": {
     "allow-plugins": {
