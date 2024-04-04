@@ -8,14 +8,19 @@ composer require craigiswayne/wp-shanela
 
 ### Options
 You have 2 options that you can configure:
-* removeDefaultThemes (default: true)
 * removeDefaultPlugins (default: true)
+* removeThemes (default: true)
+  * Allows you to specify which themes to remove
+  * If `removeDefaultThemes` is specified, will use that value instead
 
 ```
 {
     "extra": {
         "wp-shanela": {
-            "removeDefaultThemes": false,
+            "removeThemes": true,
+            "removeThemes": [
+                "twentytwentytwo"
+            ],
             "removeDefaultPlugins": false
         }
     }

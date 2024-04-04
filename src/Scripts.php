@@ -73,7 +73,7 @@ namespace Splinter\Composer\WordPress {
             );
         }
 
-        private function getOption(string $optionName, bool $defaultValue): bool {
+        private function getOption(string $optionName, $defaultValue = null) {
             $extra = $this->composer->getPackage()->getExtra();
             if(!isset($extra['wp-shanela']) || !isset($extra['wp-shanela'][$optionName])){
                 return $defaultValue;
@@ -177,7 +177,7 @@ namespace Splinter\Composer\WordPress {
             return (count(scandir($dir)) == 2);
         }
 
-        private function findAllFilesInDirectory($directory) {
+        private function findAllFilesInDirectory($directory): array {
             $filesFound = [];
             $excludedFiles = ['.', '..'];
             foreach(scandir($directory) as $filename){
@@ -257,25 +257,32 @@ namespace Splinter\Composer\WordPress {
             }
         }
 
-        private function removeDefaultThemes(){
-            $themes = ['twentytwentyone', 'twentytwentytwo', 'twentytwentythree', 'twentytwentyfour'];
+        private function removeTheme(string $theme): void {
+            self::log("Removing Theme: $theme");
+            $this->safeDeleteDirectory($this->wpCoreInstallDirectory.DIRECTORY_SEPARATOR."wp-content".DIRECTORY_SEPARATOR."themes".DIRECTORY_SEPARATOR.$theme);
+            $this->safeDeleteDirectory(self::getFinalThemesDirectory().DIRECTORY_SEPARATOR.$theme);
+        }
+
+        private function removeThemes(array $themes = ['twentytwentyone', 'twentytwentytwo', 'twentytwentythree', 'twentytwentyfour']){
             foreach($themes as $theme){
-                self::log("Removing Theme: $theme");
-                $this->safeDeleteDirectory($this->wpCoreInstallDirectory.DIRECTORY_SEPARATOR."wp-content".DIRECTORY_SEPARATOR."themes".DIRECTORY_SEPARATOR.$theme);
-                $this->safeDeleteDirectory(self::getFinalThemesDirectory().DIRECTORY_SEPARATOR.$theme);
+                $this->removeTheme($theme);
             }
         }
 
         public function postAutoloadDump(Event $event){
-            // TODO: check if wordpress directory exists
             if(!is_dir($this->wpCoreInstallDirectory)){
                 self::log("Not moving anything since the wordpress directory does not exist");
                 return;
             }
 
-            if($this->getOption('removeDefaultThemes', true)){
-                self::removeDefaultThemes();
+            $optionRemoveThemes = $this->getOption('removeThemes', true);
+
+            if($optionRemoveThemes === true){
+                self::removeThemes();
+            }else if(is_array($optionRemoveThemes)){
+                self::removeThemes($optionRemoveThemes);
             }
+
             if($this->getOption('removeDefaultPlugins', true)) {
                 self::removeDefaultPlugins();
             }
